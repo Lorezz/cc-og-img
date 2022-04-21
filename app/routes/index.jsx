@@ -1,5 +1,5 @@
 import { json } from '@remix-run/node';
-import { useActionData, Form, useTransition } from '@remix-run/react';
+import { useActionData, Form, useTransition, Link } from '@remix-run/react';
 
 import unsplashSearch from '~/lib/unsplash.js';
 import brandSearch from '~/lib/brandfetch.js';
@@ -22,6 +22,8 @@ export async function action({ request }) {
 export default function Index() {
   const transition = useTransition();
   const actionData = useActionData();
+  const picUrl = `/image/pic.png?bg=pink`;
+  const previewUrl = `/image/pic.png?bg=pink&preview=true`;
   console.log('actionData', actionData);
   return (
     <div
@@ -34,10 +36,27 @@ export default function Index() {
       <h1>Welcome to Remix</h1>
       <div
         style={{
-          display: 'flex',
+          // display: 'flex',
           background: '#fefefe',
         }}
       >
+        <div>
+          <div
+            style={{
+              background: 'black',
+              width: 612,
+              height: 252,
+              overflow: 'hidden',
+              backgroundImage: `url(${previewUrl})`,
+              backgroundSize: 'object-fit',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+          <a href={picUrl} target="preview">
+            final image
+          </a>
+        </div>
         <div>
           <Form method="post">
             <label>SEARCH UNSPLASH</label>
@@ -74,9 +93,6 @@ export default function Index() {
                 </p>
               </div>
             ))}
-        </div>
-        <div>
-          <img src="/image/pic.png" alt="pic" />
         </div>
       </div>
     </div>
