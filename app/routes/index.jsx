@@ -6,6 +6,9 @@ import brandSearch from '~/lib/brandfetch.js';
 import Preview from '~/components/Preview';
 import UnsplashForm from '~/components/UnsplashForm';
 import BrandForm from '~/components/BrandForm';
+import MyForm from '~/components/Form';
+
+import style from '~/styles/global.css';
 
 export async function action({ request }) {
   const formData = await request.formData();
@@ -20,6 +23,15 @@ export async function action({ request }) {
     console.log('data', data);
   }
   return json({ values, data });
+}
+
+export function links() {
+  return [
+    {
+      rel: 'stylesheet',
+      href: style,
+    },
+  ];
 }
 
 export default function Index() {
@@ -39,19 +51,17 @@ export default function Index() {
         width: '100%',
       }}
     >
-      <h1>CC OG-Image</h1>
-      <div
-        style={{
-          // display: 'flex',
-          background: '#fff',
-        }}
-      >
+      <h1>CC OG Image</h1>
+      <div>
         <Preview data={{ picUrl, previewUrl }} />
         <div>
           <UnsplashForm transition={transition} data={data.tags} />
         </div>
         <div>
           <BrandForm transition={transition} data={data.brand} />
+        </div>
+        <div>
+          <MyForm />
         </div>
       </div>
     </div>
