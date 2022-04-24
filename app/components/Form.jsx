@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 const imageLightOptions = [
   {
     text: 'Icon',
@@ -54,9 +52,13 @@ const Dropdown = ({ options, value, onchange, small }) => {
 
   return (
     <div className={wrapper}>
-      <select onChange={(e) => onchange(e.target.value)}>
+      <select
+        onChange={(e) => onchange(e.target.value)}
+        value={value}
+        defaultValue={value}
+      >
         {options.map((o) => (
-          <option key={o.value} value={o.value} selected={value === o.value}>
+          <option key={o.value} value={o.value}>
             {o.text}
           </option>
         ))}
@@ -128,22 +130,7 @@ const markdownOptions = [
   { text: 'Markdown', value: '1' },
 ];
 
-export default function Index() {
-  const [state, setState] = useState({
-    fileType: 'png',
-    fontSize: '125px',
-    theme: 'dark',
-    md: false,
-    text: 'CIAO MONDO',
-    images: [imageLightOptions[0].value],
-    widths: [],
-    heights: [],
-    showToast: false,
-    messageToast: '',
-    loading: true,
-    selectedImageIndex: 0,
-    overrideUrl: null,
-  });
+export default function Index({ state, setState }) {
   let timeout;
   const setLoadingState = (newState) => {
     clearTimeout(timeout);
@@ -153,12 +140,11 @@ export default function Index() {
     if (newState.overrideUrl) {
       timeout = setTimeout(() => setState({ overrideUrl: null }), 200);
     }
-
     setState({ ...newState, loading: true });
   };
   const {
     fileType = 'png',
-    fontSize = '125px',
+    fontSize = '25px',
     theme = 'light',
     md = true,
     text = '**DatoCMS and ZEIT Now** integration is online!',
@@ -170,22 +156,6 @@ export default function Index() {
   const mdValue = md ? '1' : '0';
   const imageOptions = theme === 'light' ? imageLightOptions : imageDarkOptions;
 
-  const url = new URL('http://localhost:3000/img');
-  // url.pathname = `${encodeURIComponent(text)}.${fileType}`;
-  url.searchParams.append('title', ` ${encodeURIComponent(text)}.${fileType}`);
-  url.searchParams.append('theme', theme);
-  url.searchParams.append('md', mdValue);
-  url.searchParams.append('fontSize', fontSize);
-  for (let image of images) {
-    url.searchParams.append('images', image);
-  }
-  for (let width of widths) {
-    url.searchParams.append('widths', width);
-  }
-  for (let height of heights) {
-    url.searchParams.append('heights', height);
-  }
-  console.log('url', url);
   return (
     <div>
       <Field label="Theme">

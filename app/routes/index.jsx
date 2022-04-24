@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { json } from '@remix-run/node';
 import { useActionData, useTransition, Link } from '@remix-run/react';
 
@@ -38,10 +39,52 @@ export default function Index() {
   const transition = useTransition();
   const actionData = useActionData();
   const picUrl = `/image/pic.png?bg=pink`;
-  const previewUrl = `/image/pic.png?bg=pink&preview=true`;
+  const previewUrl = `${picUrl}&preview=true`;
 
   const data = actionData?.data || {};
   console.log('data', data);
+
+  const [formState, setFomState] = useState({
+    fileType: 'png',
+    fontSize: '25px',
+    theme: 'light',
+    md: false,
+    text: 'CIAO MONDO',
+    images: [],
+    bg: '',
+    bgImage: '',
+    widths: [],
+    heights: [],
+    showToast: false,
+    messageToast: '',
+    loading: true,
+    selectedImageIndex: 0,
+    overrideUrl: null,
+    name: 'pic',
+  });
+
+  useEffect(() => {
+    function getUrl(data) {
+      const host = 'http://localhost:3000';
+      const url = new URL(`${host}/image/pic.${data.fileType || 'png'}`);
+      url.searchParams.append('text', ` ${encodeURIComponent(data.text)}`);
+      url.searchParams.append('theme', data.theme);
+      url.searchParams.append('md', data.mdValue);
+      url.searchParams.append('fontSize', data.fontSize);
+      for (let image of data.images) {
+        url.searchParams.append('images', image);
+      }
+      for (let width of data.widths) {
+        url.searchParams.append('widths', width);
+      }
+      for (let height of data.heights) {
+        url.searchParams.append('heights', height);
+      }
+      return url;
+    }
+    const url = getUrl(formState);
+    console.log('url', url);
+  }, [formState]);
 
   return (
     <div
@@ -61,7 +104,7 @@ export default function Index() {
           <BrandForm transition={transition} data={data.brand} />
         </div>
         <div>
-          <MyForm />
+          <MyForm state={formState} setState={(data) => setFomState(data)} />
         </div>
       </div>
     </div>
