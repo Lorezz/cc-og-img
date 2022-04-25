@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import puppeteer from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
-import marked from 'marked';
+import { marked } from 'marked';
 const exePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 const tiempos = readFileSync(
@@ -45,21 +45,24 @@ function getPlusSign(i) {
 }
 
 function getCss({
-  theme = 'light',
-  fontSize = '15px',
+  theme = 'cc',
+  fontSize = '45px',
   foreground = 'black',
   background = '#fff',
+  backgroundImage = '',
   font = 'Vera',
   plusColor = '#BBB',
-  full = true,
+  full = false,
 }) {
-  if (theme === 'dark') {
-    background = 'linear-gradient(135deg, #F6693D, #884290)';
-    // background =
-    //   'url(https://images.unsplash.com/photo-1647893767164-8a231e5a5ce9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80) center center';
+  if (theme === 'cc') {
+    background = 'linear-gradient(90deg, #575CE8 0%, #423FEB 100%)';
+
     foreground = 'white';
     font = 'Vera';
     plusColor = '#EEE';
+  }
+  if (backgroundImage) {
+    background = 'url(' + backgroundImage + ') center / cover no-repeat';
   }
 
   return `
@@ -92,8 +95,7 @@ function getCss({
   }
 
   ${full ? `body` : `.root`} {
-    background: #efefef;
-    background: ${background};
+    background: ${background || `#efefef`};
     height: 100vh;
     display: flex;
     text-align: center;
@@ -194,7 +196,7 @@ export async function loader({ request, params }) {
   const [name, type] = fileName.split('.');
   console.log('name', name);
 
-  const text = qs.text || 'CIAO MONDO!';
+  const text = qs.text ? decodeURIComponent(qs.text) : 'HELLU!';
   const sample_content = `
   <html>
   <body>
@@ -226,7 +228,7 @@ export async function loader({ request, params }) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>${getCss({ background: qs.bg, fontSize: '20px' })}</style>
     <body>
-        <div>
+        <div class="root">
             <div class="spacer">
             <div class="logo-wrapper">
                 ${qs.images

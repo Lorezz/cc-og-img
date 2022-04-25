@@ -1,15 +1,14 @@
-export default function Preview({ data }) {
-  const { previewUrl, picUrl } = data;
+export default function Preview({ picUrl, preview }) {
   return (
     <div>
       <div
         style={{
-          background: '#eee',
+          background: '#fff',
           width: 612,
           height: 252,
           overflow: 'hidden',
-          backgroundImage: `url(${previewUrl})`,
-          backgroundSize: 'object-fit',
+          backgroundImage: `url(${picUrl}${preview ? '&preview=true' : ''})`,
+          backgroundSize: 'fit',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
         }}

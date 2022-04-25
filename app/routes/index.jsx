@@ -7,7 +7,7 @@ import brandSearch from '~/lib/brandfetch.js';
 import Preview from '~/components/Preview';
 import UnsplashForm from '~/components/UnsplashForm';
 import BrandForm from '~/components/BrandForm';
-import MyForm from '~/components/Form';
+// import MyForm from '~/components/Form';
 
 import style from '~/styles/global.css';
 
@@ -38,51 +38,38 @@ export function links() {
 export default function Index() {
   const transition = useTransition();
   const actionData = useActionData();
-  const picUrl = `/image/pic.png?bg=pink`;
-  const previewUrl = `${picUrl}&preview=true`;
-
+  const host = 'http://localhost:3000';
+  const picUrl = `/image/pic.png?theme=cc`;
+  const [url, setUrl] = useState(picUrl);
   const data = actionData?.data || {};
   console.log('data', data);
 
   const [formState, setFomState] = useState({
     fileType: 'png',
     fontSize: '25px',
-    theme: 'light',
+    theme: 'cc',
     md: false,
     text: 'CIAO MONDO',
     images: [],
-    bg: '',
-    bgImage: '',
-    widths: [],
-    heights: [],
-    showToast: false,
-    messageToast: '',
-    loading: true,
-    selectedImageIndex: 0,
-    overrideUrl: null,
-    name: 'pic',
+    background: '',
+    foreground: '',
+    backgroundImage: '',
   });
 
   useEffect(() => {
     function getUrl(data) {
-      const host = 'http://localhost:3000';
       const url = new URL(`${host}/image/pic.${data.fileType || 'png'}`);
       url.searchParams.append('text', ` ${encodeURIComponent(data.text)}`);
       url.searchParams.append('theme', data.theme);
-      url.searchParams.append('md', data.mdValue);
+      url.searchParams.append('md', data.md);
       url.searchParams.append('fontSize', data.fontSize);
       for (let image of data.images) {
         url.searchParams.append('images', image);
       }
-      for (let width of data.widths) {
-        url.searchParams.append('widths', width);
-      }
-      for (let height of data.heights) {
-        url.searchParams.append('heights', height);
-      }
       return url;
     }
     const url = getUrl(formState);
+    setUrl(url.toString());
     console.log('url', url);
   }, [formState]);
 
@@ -96,16 +83,14 @@ export default function Index() {
     >
       <h1>CC OG Image</h1>
       <div>
-        <Preview data={{ picUrl, previewUrl }} />
+        {url && <Preview picUrl={url} preview={true} />}
         <div>
           <UnsplashForm transition={transition} data={data.tags} />
         </div>
         <div>
           <BrandForm transition={transition} data={data.brand} />
         </div>
-        <div>
-          <MyForm state={formState} setState={(data) => setFomState(data)} />
-        </div>
+        <div></div>
       </div>
     </div>
   );
