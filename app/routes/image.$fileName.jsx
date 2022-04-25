@@ -31,6 +31,7 @@ function sanitizeHtml(html) {
 }
 
 function getImage(src, width = 'auto', height = '180') {
+  if (!src) return '';
   return `<img
         class="logo"
         alt="Generated Image"
@@ -45,7 +46,7 @@ function getPlusSign(i) {
 }
 
 function getCss({
-  theme = 'cc',
+  theme = null,
   fontSize = '45px',
   foreground = 'black',
   background = '#fff',
@@ -54,16 +55,22 @@ function getCss({
   plusColor = '#BBB',
   full = false,
 }) {
-  if (theme === 'cc') {
+  if (theme && theme === 'cc') {
     background = 'linear-gradient(90deg, #575CE8 0%, #423FEB 100%)';
-
     foreground = 'white';
     font = 'Vera';
     plusColor = '#EEE';
   }
-  if (backgroundImage) {
-    background = 'url(' + backgroundImage + ') center / cover no-repeat';
+  if (theme && theme === 'dark') {
+    background = 'linear-gradient(45deg, #333 0%, #232527 100%)';
+    foreground = 'white';
+    font = 'Colfax';
+    plusColor = '#EEE';
   }
+  // if (backgroundImage) {
+  //   background = `url(${backgroundImage}) center cover no-repeat`;
+  //   console.log('backgroundImage', background);
+  // }
 
   return `
   @font-face {
@@ -95,7 +102,7 @@ function getCss({
   }
 
   ${full ? `body` : `.root`} {
-    background: ${background || `#efefef`};
+    background: ${background || 'transparent'};
     height: 100vh;
     display: flex;
     text-align: center;
@@ -147,35 +154,6 @@ function getCss({
     line-height: 1.2;
     letter-spacing: -0.02em;
   }
-  ${
-    theme === 'light' &&
-    `
-      strong {
-        background-image: linear-gradient(120deg, #f4cf58 0%, #f4cf58 100%);
-        background-repeat: no-repeat;
-        background-size: 100% 0.4em;
-        background-position: 0 88%;
-        font-weight: inherit;
-      }
-
-      .heading {
-        position: relative;
-      }
-
-      .heading:before {
-        content: '';
-        display: block;
-        width: 40vw;
-        z-index: -1;
-        position: absolute;
-        top: 0%;
-        bottom: 0%;
-        left: 50%;
-        transform: translate(-50%, 0) skew(0deg, -10deg);
-        background: linear-gradient(45deg, #f9ecfe, #fefae4);
-      }
-      `
-  }
 `;
 }
 
@@ -196,7 +174,10 @@ export async function loader({ request, params }) {
   const [name, type] = fileName.split('.');
   console.log('name', name);
 
-  const text = qs.text ? decodeURIComponent(qs.text) : 'HELLU!';
+  const text = qs.text ? qs.text : 'HELLU!';
+  const bgImg = qs.backgroundImage
+    ? decodeURIComponent(qs.backgroundImage)
+    : null;
   const sample_content = `
   <html>
   <body>
@@ -226,17 +207,26 @@ export async function loader({ request, params }) {
     <meta charset="utf-8">
     <title>Generated Image</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>${getCss({ background: qs.bg, fontSize: '20px' })}</style>
+    <style>${getCss({ ...qs })}</style>
     <body>
-        <div class="root">
+        <div class="root"  ${
+          bgImg
+            ? `style="background-image: url(${bgImg});background-size:cover;background-position:center;`
+            : ''
+        }>
             <div class="spacer">
             <div class="logo-wrapper">
-                ${qs.images
-                  ?.map(
-                    (img, i) =>
-                      getPlusSign(i) + getImage(img, widths[i], heights[i])
-                  )
-                  .join('')}
+                ${
+                  qs?.images &&
+                  qs.images.length > 0 &&
+                  qs.images
+                    .map((img) => {
+                      if (img) {
+                        return getPlusSign(i) + getImage(img);
+                      }
+                    })
+                    .join('')
+                }
             </div>
             <div class="spacer">
             <div class="heading">${qs.md ? marked(text) : sanitizeHtml(text)}
@@ -247,7 +237,7 @@ export async function loader({ request, params }) {
 
   let options;
   let viewport = preview
-    ? { width: 612, height: 252, deviceScaleFactor: 1 }
+    ? { width: 1024, height: 585, deviceScaleFactor: 1 }
     : { width: 2048, height: 1170, deviceScaleFactor: 1 };
   const isDev = process.env.NODE_ENV
     ? process.env.NODE_ENV === 'development'

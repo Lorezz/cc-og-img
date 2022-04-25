@@ -16,7 +16,7 @@ const search = async (query) => {
       perPage: 10,
     });
     const data = r?.response?.results;
-    console.log('data', data);
+    // console.log('data', data);
 
     if (!data) {
       return { query, images: [], total: 0 };

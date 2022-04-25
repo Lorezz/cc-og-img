@@ -1,38 +1,67 @@
-import { useState, useCallback } from 'react';
-// import debounce from 'lodash.debounce';
+import { useState, useEffect } from 'react';
+import { json } from '@remix-run/node';
+import { useActionData, useTransition, Link } from '@remix-run/react';
+
+import unsplashSearch from '~/lib/unsplash.js';
+import brandSearch from '~/lib/brandfetch.js';
 import Preview from '~/components/Preview';
-import Unsplash from '~/components/Unsplash';
+import UnsplashForm from '~/components/UnsplashForm';
+import BrandForm from '~/components/BrandForm';
+// import MyForm from '~/components/Form';
+
+import style from '~/styles/global.css';
+
+export async function action({ request }) {
+  const formData = await request.formData();
+  const values = Object.fromEntries(formData);
+  let data = {};
+  if (values.tags) {
+    const tags = values.tags.trim(); //.split(',');
+    data['tags'] = await unsplashSearch(tags);
+  } else if (values.brand) {
+    const brand = values.brand.trim(); //.split(',');
+    data['brand'] = await brandSearch(brand);
+    console.log('data', data);
+  }
+  return json({ values, data });
+}
+
+export function links() {
+  return [
+    {
+      rel: 'stylesheet',
+      href: style,
+    },
+  ];
+}
 
 export default function Index() {
+  const transition = useTransition();
+  const actionData = useActionData();
   const host = 'http://localhost:3000';
+  const picUrl = `/image/pic.png?theme=cc`;
+  // const [url, setUrl] = useState(picUrl);
+  const data = actionData?.data || {};
+  console.log('data', data);
 
   const [formState, setFomState] = useState({
     fileType: 'png',
     fontSize: '25px',
-    theme: null,
+    theme: 'cc',
     md: false,
     text: 'Hellow World!',
     images: [],
-    background: '#ffffff',
-    foreground: '#111111',
-    backgroundImage: null,
+    background: '#fff',
+    foreground: '#111',
+    backgroundImage: '',
   });
 
   function getUrl(data) {
     const url = new URL(`${host}/image/pic.${data.fileType || 'png'}`);
     url.searchParams.append('text', data.text);
-    url.searchParams.append('theme', data.theme || '');
+    url.searchParams.append('theme', data.theme);
     url.searchParams.append('md', data.md);
     url.searchParams.append('fontSize', data.fontSize);
-    url.searchParams.append('foreground', data.foreground);
-    url.searchParams.append('background', data.background);
-
-    if (data.backgroundImage) {
-      url.searchParams.append(
-        'backgroundImage',
-        encodeURIComponent(data.backgroundImage)
-      );
-    }
     for (let image of data.images) {
       url.searchParams.append('images', image);
     }
@@ -41,11 +70,12 @@ export default function Index() {
 
   function handleChange(e) {
     const { name, value } = e.target;
+    console.log(name, value);
     setFomState((prev) => ({ ...prev, [name]: value }));
     return;
   }
-
   const url = getUrl(formState).toString();
+  console.log('url', url);
   return (
     <div
       style={{
@@ -57,7 +87,12 @@ export default function Index() {
       <h1>CC OG Image</h1>
       <div>
         {url && <Preview picUrl={url} preview={true} />}
-
+        <div>
+          <UnsplashForm transition={transition} data={data.tags} />
+        </div>
+        <div>
+          <BrandForm transition={transition} data={data.brand} />
+        </div>
         <div>
           <label>Text</label>
           <input
@@ -71,17 +106,8 @@ export default function Index() {
           <label>Text Color</label>
           <input
             type="color"
-            value={formState.foreground}
-            name="foreground"
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
-        <div>
-          <label>Bg Color</label>
-          <input
-            type="color"
-            value={formState.background}
-            name="background"
+            value={formState.forergound}
+            name="forergound"
             onChange={(e) => handleChange(e)}
           />
         </div>
@@ -93,7 +119,6 @@ export default function Index() {
             name="theme"
             onChange={(e) => handleChange(e)}
           >
-            <option value={null}>none</option>
             <option value="cc">CC</option>
             <option value="light">light</option>
             <option value="dato">dato</option>
@@ -111,16 +136,6 @@ export default function Index() {
             <option value="png">png</option>
             <option value="jpeg">jpeg</option>
           </select>
-        </div>
-        <div>
-          <Unsplash
-            current={formState.backgroundImage}
-            handleSelect={(backgroundImage) =>
-              handleChange({
-                target: { name: 'backgroundImage', value: backgroundImage },
-              })
-            }
-          />
         </div>
       </div>
     </div>

@@ -4,8 +4,8 @@ export default function Preview({ picUrl, preview }) {
       <div
         style={{
           background: '#fff',
-          width: 612,
-          height: 252,
+          width: 1024,
+          height: 585,
           overflow: 'hidden',
           backgroundImage: `url(${picUrl}${preview ? '&preview=true' : ''})`,
           backgroundSize: 'fit',
