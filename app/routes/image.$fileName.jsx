@@ -51,6 +51,7 @@ function getCss({
   foreground = 'black',
   background = '#fff',
   backgroundImage = '',
+  fontWeight = 'regular',
   font = 'Vera',
   plusColor = '#BBB',
   full = false,
@@ -58,15 +59,24 @@ function getCss({
   if (theme && theme === 'cc') {
     background = 'linear-gradient(90deg, #575CE8 0%, #423FEB 100%)';
     foreground = 'white';
-    font = 'Vera';
     plusColor = '#EEE';
   }
   if (theme && theme === 'dark') {
     background = 'linear-gradient(45deg, #333 0%, #232527 100%)';
     foreground = 'white';
-    font = 'Colfax';
     plusColor = '#EEE';
   }
+  if (theme && theme === 'dato') {
+    background = 'linear-gradient(135deg, #F6693D, #884290)';
+    foreground = 'white';
+    plusColor = '#EEE';
+  }
+  if (theme && theme === 'light') {
+    background = '#f9f9f9';
+    foreground = 'black';
+    plusColor = '#111';
+  }
+
   // if (backgroundImage) {
   //   background = `url(${backgroundImage}) center cover no-repeat`;
   //   console.log('backgroundImage', background);
@@ -147,12 +157,21 @@ function getCss({
     font-size: 100px;
   }
   .heading {
+    max-width: 80%;
     font-family: '${font}', sans-serif;
     font-size: ${fontSize};
     font-style: normal;
+    font-weight: ${fontWeight};
     color: ${foreground};
     line-height: 1.2;
     letter-spacing: -0.02em;
+  }
+
+
+  body, root{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
   }
 `;
 }
@@ -201,6 +220,21 @@ export async function loader({ request, params }) {
   </body>
   </html>`;
 
+  let imagePart = '';
+  if (qs?.images && qs.images.length > 0) {
+    imagePart = `
+    <div class="spacer">
+    <div class="logo-wrapper">
+        ${qs.images
+          .map((img) => {
+            return img ? getPlusSign(i) + getImage(img) : '';
+          })
+          .join('')
+          .trim()}
+    </div>
+    `;
+  }
+
   const content = `
   <!DOCTYPE html>
   <html>
@@ -214,22 +248,11 @@ export async function loader({ request, params }) {
             ? `style="background-image: url(${bgImg});background-size:cover;background-position:center;`
             : ''
         }>
+              ${imagePart}
             <div class="spacer">
-            <div class="logo-wrapper">
-                ${
-                  qs?.images &&
-                  qs.images.length > 0 &&
-                  qs.images
-                    .map((img) => {
-                      if (img) {
-                        return getPlusSign(i) + getImage(img);
-                      }
-                    })
-                    .join('')
-                }
-            </div>
-            <div class="spacer">
-            <div class="heading">${qs.md ? marked(text) : sanitizeHtml(text)}
+            <div class="heading">${
+              qs.md === 'true' ? marked(text) : sanitizeHtml(text)
+            }
             </div>
         </div>
     </body>
@@ -237,7 +260,7 @@ export async function loader({ request, params }) {
 
   let options;
   let viewport = preview
-    ? { width: 1024, height: 585, deviceScaleFactor: 1 }
+    ? { width: 2048, height: 1170, deviceScaleFactor: 0.5 }
     : { width: 2048, height: 1170, deviceScaleFactor: 1 };
   const isDev = process.env.NODE_ENV
     ? process.env.NODE_ENV === 'development'

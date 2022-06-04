@@ -26,56 +26,62 @@ export default function UnsplashForm({ current, handleSelect }) {
   }
 
   return (
-    <div>
+    <>
       {current && (
-        <div>
+        <div className="flex flex-col">
           <img src={current + '?w=150'} alt="" width={150} />
-          <button type="button" onClick={() => handleSelect(null)}>
+          <button
+            className="button"
+            type="button"
+            onClick={() => handleSelect(null)}
+          >
             reset
           </button>
         </div>
       )}
       {!current && (
-        <div>
+        <>
           <label>SEARCH UNSPLASH</label>
-          <input
-            type="text"
-            name="tags"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            required
-            placeholder="tags: shoes,bags,phones"
-          />
-          <button type="button" onClick={() => getData(search)}>
-            {loading ? 'Searching...' : 'Search'}
-          </button>
+          <div className="flex">
+            <input
+              className="rounded p-4"
+              type="text"
+              name="tags"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              required
+              placeholder="tags: shoes,bags,phones"
+            />
 
-          <div style={{ display: 'flex', width: '100%', overflowX: 'scroll' }}>
+            <button
+              type="button"
+              className="button"
+              onClick={() => getData(search)}
+            >
+              {loading ? 'Searching...' : 'Search'}
+            </button>
+          </div>
+          <div className="flex overflow-x-auto w-full">
             {data?.images?.map((img) => (
               <div
                 onClick={() => handleSelect(img.urls.raw)}
                 key={img.id}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  pagging: 10,
-                  margin: 2,
-                  border: '1px solid black',
-                }}
+                className="flex-shrink-0 flex flex-col m-2"
               >
                 <img
+                  className="min-w-[200px]"
                   src={img.urls.small}
                   alt={img.alt_description}
-                  width={150}
+                  width={200}
                 />
-                <p>
+                <p className="text-xs">
                   {img.author} - {img.descriptions}
                 </p>
               </div>
             ))}
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </>
   );
 }

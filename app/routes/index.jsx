@@ -7,23 +7,27 @@ export default function Index() {
   const host = 'http://localhost:3000';
 
   const [formState, setFomState] = useState({
-    fileType: 'png',
-    fontSize: '25px',
-    theme: null,
-    md: false,
-    text: 'Hellow World!',
+    font: 'Colfax',
+    fileType: 'jpeg',
+    fontSize: '125px',
+    fontWeight: 'regular',
+    theme: '',
+    md: true,
+    text: 'Hello **World**!',
     images: [],
-    background: '#ffffff',
-    foreground: '#111111',
+    background: '#111111',
+    foreground: '#fefefe',
     backgroundImage: null,
   });
 
   function getUrl(data) {
     const url = new URL(`${host}/image/pic.${data.fileType || 'png'}`);
     url.searchParams.append('text', data.text);
-    url.searchParams.append('theme', data.theme || '');
+    url.searchParams.append('theme', data.theme);
     url.searchParams.append('md', data.md);
     url.searchParams.append('fontSize', data.fontSize);
+    url.searchParams.append('fontWeight', data.fontWeight);
+    url.searchParams.append('font', data.font);
     url.searchParams.append('foreground', data.foreground);
     url.searchParams.append('background', data.background);
 
@@ -41,86 +45,133 @@ export default function Index() {
 
   function handleChange(e) {
     const { name, value } = e.target;
+    console.log('handleChange', name, value);
     setFomState((prev) => ({ ...prev, [name]: value }));
     return;
   }
 
   const url = getUrl(formState).toString();
   return (
-    <div
-      style={{
-        fontFamily: 'system-ui, sans-serif',
-        lineHeight: '1.4',
-        width: '100%',
-      }}
-    >
-      <h1>CC OG Image</h1>
-      <div>
-        {url && <Preview picUrl={url} preview={true} />}
-
-        <div>
-          <label>Text</label>
-          <input
-            type="text"
-            value={formState.text}
-            name="text"
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
-        <div>
-          <label>Text Color</label>
-          <input
-            type="color"
-            value={formState.foreground}
-            name="foreground"
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
-        <div>
-          <label>Bg Color</label>
-          <input
-            type="color"
-            value={formState.background}
-            name="background"
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
-        <div>
-          <label>Theme</label>
-          <select
-            type="select"
-            value={formState.fileType}
-            name="theme"
-            onChange={(e) => handleChange(e)}
-          >
-            <option value={null}>none</option>
-            <option value="cc">CC</option>
-            <option value="light">light</option>
-            <option value="dato">dato</option>
-            <option value="dark">dark</option>
-          </select>
-        </div>
-        <div>
-          <label>Image Type</label>
-          <select
-            type="select"
-            value={formState.fileType}
-            name="fileType"
-            onChange={(e) => handleChange(e)}
-          >
-            <option value="png">png</option>
-            <option value="jpeg">jpeg</option>
-          </select>
-        </div>
-        <div>
-          <Unsplash
-            current={formState.backgroundImage}
-            handleSelect={(backgroundImage) =>
-              handleChange({
-                target: { name: 'backgroundImage', value: backgroundImage },
-              })
-            }
-          />
+    <div className="mainWrap">
+      {url && <Preview picUrl={url} preview={true} />}
+      <div className="formWrap">
+        <div className="formContainer">
+          <div className="formField">
+            <Unsplash
+              current={formState.backgroundImage}
+              handleSelect={(backgroundImage) =>
+                handleChange({
+                  target: { name: 'backgroundImage', value: backgroundImage },
+                })
+              }
+            />
+          </div>
+          <div className="formField">
+            <label>Text</label>
+            <input
+              className="rows-3"
+              type="text"
+              value={formState.text}
+              name="text"
+              onChange={(e) => handleChange(e)}
+            />
+          </div>
+          <div className="formField">
+            <label>MArkdown</label>
+            <input
+              type="checkbox"
+              name="md"
+              defaultChecked={formState.md}
+              value={formState.md}
+              onChange={(e) =>
+                handleChange({
+                  target: { name: 'md', value: e.target.checked },
+                })
+              }
+            />
+          </div>
+          <div className={`flex ${formState.theme ? 'hidden' : ''}`}>
+            <div className="formField">
+              <label>Text Color</label>
+              <input
+                type="color"
+                value={formState.foreground}
+                name="foreground"
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="formField">
+              <label>Bg Color</label>
+              <input
+                type="color"
+                value={formState.background}
+                name="background"
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
+          <div className={`formField ${formState.theme ? 'hidden' : ''}`}>
+            <label>Font</label>
+            <select
+              type="select"
+              name="font"
+              onChange={(e) => handleChange(e)}
+              value={formState.font}
+            >
+              <option value="Arial"> - </option>
+              <option value="Tiempos">Tiempos</option>
+              <option value="Colfax">Colfax</option>
+              <option value="Vera">Vera Mono</option>
+            </select>
+          </div>
+          <div className="formField">
+            <label>Font Weight</label>
+            <select
+              type="select"
+              name="fontWeight"
+              onChange={(e) => handleChange(e)}
+              value={formState.fontWeight}
+            >
+              <option value="regular">Regular</option>
+              <option value="bold">Bold</option>
+            </select>
+          </div>
+          <div className="formField">
+            <label>Font Size</label>
+            <input
+              type="text"
+              value={formState.fontSize}
+              name="fontSize"
+              onChange={(e) => handleChange(e)}
+            />
+          </div>
+          <div className="formField">
+            <label>Theme</label>
+            <select
+              type="select"
+              value={formState.theme}
+              name="theme"
+              onChange={(e) => handleChange(e)}
+            >
+              <option value={''}> - </option>
+              <option value="cc">CC</option>
+              <option value="light">light</option>
+              <option value="dato">dato</option>
+              <option value="dark">dark</option>
+            </select>
+          </div>
+          <div className="formField">
+            <label>Image Type</label>
+            <select
+              type="select"
+              value={formState.fileType}
+              name="fileType"
+              onChange={(e) => handleChange(e)}
+            >
+              <option value="png">png</option>
+              <option value="jpeg">jpeg</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
