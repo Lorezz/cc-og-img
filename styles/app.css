@@ -16,10 +16,10 @@
   }
 
   .formWrap {
-    @apply fixed right-10 bottom-10 z-10 w-4/12 shadow-lg;
+    @apply fixed right-10 bottom-10 z-10  shadow-lg max-h-screen overflow-y-auto flex flex-row-reverse;
   }
   .formContainer{
-    @apply bg-gray-100  rounded-lg p-5  w-full  ;
+    @apply bg-gray-100  rounded-lg p-5  w-full mx-2  ;
   }
   .formField {
     @apply flex flex-col mb-2 mx-4;

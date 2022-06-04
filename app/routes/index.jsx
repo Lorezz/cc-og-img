@@ -1,7 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 // import debounce from 'lodash.debounce';
+// import throttle from 'lodash.throttle';
 import Preview from '~/components/Preview';
 import Unsplash from '~/components/Unsplash';
+import BrandIcon from '~/components/BrandIcon';
 
 export default function Index() {
   const host = 'http://localhost:3000';
@@ -14,13 +16,16 @@ export default function Index() {
     theme: '',
     md: true,
     text: 'Hello **World**!',
-    images: [],
     background: '#111111',
     foreground: '#fefefe',
     backgroundImage: null,
+    icon: null,
+    icon2: null,
   });
 
+  let timeout;
   function getUrl(data) {
+    console.log('change url');
     const url = new URL(`${host}/image/pic.${data.fileType || 'png'}`);
     url.searchParams.append('text', data.text);
     url.searchParams.append('theme', data.theme);
@@ -37,8 +42,11 @@ export default function Index() {
         encodeURIComponent(data.backgroundImage)
       );
     }
-    for (let image of data.images) {
-      url.searchParams.append('images', image);
+    if (data.icon) {
+      url.searchParams.append('icon1', data.icon);
+    }
+    if (data.icon2) {
+      url.searchParams.append('icon2', data.icon2);
     }
     return url;
   }
@@ -50,7 +58,11 @@ export default function Index() {
     return;
   }
 
-  const url = getUrl(formState).toString();
+  const generateUrl = useCallback(() => {
+    return getUrl(formState).toString();
+  }, [formState]);
+
+  const url = generateUrl();
   return (
     <div className="mainWrap">
       {url && <Preview picUrl={url} preview={true} />}
@@ -66,6 +78,28 @@ export default function Index() {
               }
             />
           </div>
+          <div className="formField">
+            <BrandIcon
+              current={formState.icon}
+              handleSelect={(icon) =>
+                handleChange({
+                  target: { name: 'icon', value: icon },
+                })
+              }
+            />
+          </div>
+          <div className="formField">
+            <BrandIcon
+              current={formState.icon2}
+              handleSelect={(icon) =>
+                handleChange({
+                  target: { name: 'icon2', value: icon },
+                })
+              }
+            />
+          </div>
+        </div>
+        <div className="formContainer">
           <div className="formField">
             <label>Text</label>
             <input
@@ -118,10 +152,10 @@ export default function Index() {
               onChange={(e) => handleChange(e)}
               value={formState.font}
             >
-              <option value="Arial"> - </option>
+              <option value=""> - </option>
               <option value="Tiempos">Tiempos</option>
               <option value="Colfax">Colfax</option>
-              <option value="Vera">Vera Mono</option>
+              <option value="Vera">Vera</option>
             </select>
           </div>
           <div className="formField">

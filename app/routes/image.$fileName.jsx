@@ -32,13 +32,7 @@ function sanitizeHtml(html) {
 
 function getImage(src, width = 'auto', height = '180') {
   if (!src) return '';
-  return `<img
-        class="logo"
-        alt="Generated Image"
-        src="${sanitizeHtml(src)}"
-        width="${sanitizeHtml(width)}"
-        height="${sanitizeHtml(height)}"
-    />`;
+  return `<img class="logo" alt="logo" src="${src}" width="${width}" height="${height}"/>`;
 }
 
 function getPlusSign(i) {
@@ -57,7 +51,9 @@ function getCss({
   full = false,
 }) {
   if (theme && theme === 'cc') {
-    background = 'linear-gradient(90deg, #575CE8 0%, #423FEB 100%)';
+    // background = 'linear-gradient(90deg, #575CE8 0%, #423FEB 100%)';
+    background =
+      'linear-gradient(295deg, #FD7CFF 2%, #575CE8 60%,#423FEB 100%)';
     foreground = 'white';
     plusColor = '#EEE';
   }
@@ -111,10 +107,18 @@ function getCss({
     src: url(data:font/woff2;charset=utf-8;base64,${mono})  format("woff2");
   }
 
+  body,
+  .root {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+  }
+
   ${full ? `body` : `.root`} {
     background: ${background || 'transparent'};
     height: 100vh;
     display: flex;
+    flex-direction: column;
     text-align: center;
     align-items: center;
     justify-content: center;
@@ -126,7 +130,6 @@ function getCss({
     white-space: pre-wrap;
     letter-spacing: -5px;
   }
-
   code:before,
   code:after {
     content: '\`';
@@ -143,13 +146,7 @@ function getCss({
     margin: 0 75px;
   }
   .spacer {
-    margin: 150px;
-  }
-  .emoji {
-    height: 1em;
-    width: 1em;
-    margin: 0 0.05em 0 0.1em;
-    vertical-align: -0.1em;
+    margin-top: 100px;
   }
   .plus {
     color: ${plusColor};
@@ -157,28 +154,20 @@ function getCss({
     font-size: 100px;
   }
   .heading {
-    max-width: 80%;
+    text-align: center;
     font-family: '${font}', sans-serif;
     font-size: ${fontSize};
     font-style: normal;
     font-weight: ${fontWeight};
     color: ${foreground};
-    line-height: 1.2;
+    line-height: 1.0;
     letter-spacing: -0.02em;
   }
 
 
-  body, root{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-  }
+
 `;
 }
-
-/*
-
-*/
 
 export async function loader({ request, params }) {
   const url = new URL(request.url);
@@ -197,36 +186,15 @@ export async function loader({ request, params }) {
   const bgImg = qs.backgroundImage
     ? decodeURIComponent(qs.backgroundImage)
     : null;
-  const sample_content = `
-  <html>
-  <body>
-    <style>
-      @import url('https://fonts.googleapis.com/css?family=Roboto');
-      body {
-        font-family: 'Roboto', sans-serif;
-        font-size: 16px;
-        margin:0;
-        padding:0;
-        width:100vw;
-        height:100vh;
-        background:${qs?.bg || '#222'};
-        color:#fefefe;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-      }
-    </style>
-    <h1>HELLO WORLD</h1>
-  </body>
-  </html>`;
 
+  const images = [qs?.icon1, qs?.icon2].filter(Boolean);
   let imagePart = '';
-  if (qs?.images && qs.images.length > 0) {
+  if (images && images.length > 0) {
     imagePart = `
     <div class="spacer">
     <div class="logo-wrapper">
-        ${qs.images
-          .map((img) => {
+        ${images
+          .map((img, i) => {
             return img ? getPlusSign(i) + getImage(img) : '';
           })
           .join('')

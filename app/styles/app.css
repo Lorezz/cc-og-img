@@ -674,13 +674,18 @@ input {
   right: 2.5rem;
   bottom: 2.5rem;
   z-index: 10;
-  width: 33.333333%;
+  display: flex;
+  max-height: 100vh;
+  flex-direction: row-reverse;
+  overflow-y: auto;
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 .formContainer {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
   width: 100%;
   border-radius: 0.5rem;
   --tw-bg-opacity: 1;
@@ -714,6 +719,10 @@ input {
 
 .hidden {
   display: none;
+}
+
+.h-\[50px\] {
+  height: 50px;
 }
 
 .h-full {
@@ -760,26 +769,9 @@ input {
   padding: 1rem;
 }
 
-.pl-4 {
-  padding-left: 1rem;
-}
-
-.pt-4 {
-  padding-top: 1rem;
-}
-
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-}
-
-.font-bold {
-  font-weight: 700;
 }
 
 .filter {
