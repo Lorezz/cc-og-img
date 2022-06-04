@@ -6,7 +6,7 @@ import Unsplash from '~/components/Unsplash';
 import BrandIcon from '~/components/BrandIcon';
 
 export default function Index() {
-  const host = 'http://localhost:3000';
+  const host = process.env.HOST;
 
   const [formState, setFomState] = useState({
     font: 'Colfax',
