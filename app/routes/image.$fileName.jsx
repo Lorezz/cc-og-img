@@ -239,35 +239,39 @@ export async function loader({ request, params }) {
     ? { width: 2048, height: 1170, deviceScaleFactor: 0.5 }
     : { width: 2048, height: 1170, deviceScaleFactor: 1 };
 
-  // const isDev = process.env.IS_DEV ? true : false;
-  // console.log('isDev', isDev);
-  // if (isDev) {
-  options = {
-    args: [],
-    executablePath: exePath,
-    headless: true,
-  };
-  // } else {
-  //   options = {
-  //     args: chrome.args,
-  //     executablePath: await chrome.executablePath,
-  //     headless: chrome.headless,
-  //   };
-  // }
-
-  const browser = await puppeteer.launch(options);
-  const page = await browser.newPage();
-  page.setViewport(viewport);
-  await page.setContent(content);
-  // path: `/tmp/${name}-${Date.now()}.${type}`,
-  const pic = await page.screenshot({
-    type: type,
-  });
-  await browser.close();
-  return new Response(pic, {
-    status: 200,
-    headers: {
-      'Content-Type': `image/${type}`,
-    },
-  });
+  const isDev = process.env.IS_DEV ? true : false;
+  console.log('isDev', isDev);
+  if (isDev) {
+    options = {
+      args: [],
+      executablePath: exePath,
+      headless: true,
+    };
+  } else {
+    options = {
+      args: chrome.args,
+      executablePath: await chrome.executablePath,
+      headless: chrome.headless,
+    };
+  }
+  try {
+    const browser = await puppeteer.launch(options);
+    const page = await browser.newPage();
+    page.setViewport(viewport);
+    await page.setContent(content);
+    // path: `/tmp/${name}-${Date.now()}.${type}`,
+    const pic = await page.screenshot({
+      type: type,
+    });
+    await browser.close();
+    return new Response(pic, {
+      status: 200,
+      headers: {
+        'Content-Type': `image/${type}`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
