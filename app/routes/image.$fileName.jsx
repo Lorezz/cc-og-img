@@ -2,7 +2,15 @@ import { readFileSync } from 'fs';
 import puppeteer from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
 import { marked } from 'marked';
-const exePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+// const exePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+
+const chromeExecPaths = {
+  win32: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  linux: '/usr/bin/google-chrome',
+  darwin: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+};
+
+const exePath = chromeExecPaths[process.platform];
 
 const tiempos = readFileSync(
   `${__dirname}/../public/fonts/tiempos-headline-web-semibold.woff2`
@@ -230,21 +238,22 @@ export async function loader({ request, params }) {
   let viewport = preview
     ? { width: 2048, height: 1170, deviceScaleFactor: 0.5 }
     : { width: 2048, height: 1170, deviceScaleFactor: 1 };
-  const isDev = process.env.IS_DEV ? true : false;
-  console.log('isDev', isDev);
-  if (isDev) {
-    options = {
-      args: [],
-      executablePath: exePath,
-      headless: true,
-    };
-  } else {
-    options = {
-      args: chrome.args,
-      executablePath: await chrome.executablePath,
-      headless: chrome.headless,
-    };
-  }
+
+  // const isDev = process.env.IS_DEV ? true : false;
+  // console.log('isDev', isDev);
+  // if (isDev) {
+  options = {
+    args: [],
+    executablePath: exePath,
+    headless: true,
+  };
+  // } else {
+  //   options = {
+  //     args: chrome.args,
+  //     executablePath: await chrome.executablePath,
+  //     headless: chrome.headless,
+  //   };
+  // }
 
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
