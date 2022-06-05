@@ -1,7 +1,7 @@
 {
-  "name": "remix-template-vercel",
+  "name": "cc-og-image",
   "private": true,
-  "description": "",
+  "description": "remix app to generate og images",
   "license": "",
   "sideEffects": false,
   "scripts": {

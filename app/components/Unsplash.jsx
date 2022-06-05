@@ -69,10 +69,9 @@ export default function UnsplashForm({ current, handleSelect }) {
                 className="flex-shrink-0 flex flex-col m-2"
               >
                 <img
-                  className="min-w-[200px]"
+                  className="max-h-[150px]"
                   src={img.urls.small}
                   alt={img.alt_description}
-                  width={200}
                 />
                 <p className="text-xs">
                   {img.author} - {img.descriptions}

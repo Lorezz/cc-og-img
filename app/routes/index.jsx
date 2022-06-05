@@ -74,7 +74,7 @@ export default function Index() {
       {url && <Preview picUrl={url} preview={true} />}
       <div className="formWrap">
         <div className="formContainer">
-          <div className="formField">
+          <div className="formField max-w-[350px]">
             <Unsplash
               current={formState.backgroundImage}
               handleSelect={(backgroundImage) =>

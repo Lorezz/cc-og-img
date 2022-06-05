@@ -272,6 +272,6 @@ export async function loader({ request, params }) {
     });
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   }
 }
