@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 export default function UnsplashForm({ current, handleSelect }) {
   const [data, setData] = useState(null);

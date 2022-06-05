@@ -231,12 +231,10 @@ export async function loader({ request, params }) {
     ? { width: 2048, height: 1170, deviceScaleFactor: 0.5 }
     : { width: 2048, height: 1170, deviceScaleFactor: 1 };
   const isDev = process.env.NODE_ENV
-    ? process.env.NODE_ENV === 'development'
+    ? process.env.NODE_ENV === 'develop'
     : false;
   console.log('isDev', isDev);
   if (isDev) {
-    //viewport = { ...viewport, deviceScaleFactor: 0.5 };
-    // viewport = { width: 612, height: 252, deviceScaleFactor: 1 };
     options = {
       args: [],
       executablePath: exePath,

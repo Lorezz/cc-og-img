@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 export default function BrandIcForm({ current, handleSelect }) {
   const [data, setData] = useState(null);
@@ -41,7 +41,7 @@ export default function BrandIcForm({ current, handleSelect }) {
       )}
       {!current && (
         <>
-          <label>SERVICE ICON</label>
+          <label>BRAND ICON</label>
           <div className="flex">
             <input
               className="rounded p-4"
