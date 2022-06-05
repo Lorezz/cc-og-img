@@ -230,9 +230,7 @@ export async function loader({ request, params }) {
   let viewport = preview
     ? { width: 2048, height: 1170, deviceScaleFactor: 0.5 }
     : { width: 2048, height: 1170, deviceScaleFactor: 1 };
-  const isDev = process.env.NODE_ENV
-    ? process.env.NODE_ENV === 'develop'
-    : false;
+  const isDev = process.env.IS_DEV ? true : false;
   console.log('isDev', isDev);
   if (isDev) {
     options = {

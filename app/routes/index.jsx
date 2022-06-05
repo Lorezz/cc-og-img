@@ -1,13 +1,20 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useLoaderData } from '@remix-run/react';
+import { useState, useCallback } from 'react';
 // import debounce from 'lodash.debounce';
 // import throttle from 'lodash.throttle';
 import Preview from '~/components/Preview';
 import Unsplash from '~/components/Unsplash';
 import BrandIcon from '~/components/BrandIcon';
 
-export default function Index() {
-  const host = process.env.HOST;
+export async function loader({ request, params }) {
+  const currentUrl = new URL(request.url);
+  console.log('CURRENT URL', currentUrl);
+  return request.url;
+}
 
+export default function Index() {
+  const origin = useLoaderData();
+  console.log('ORIGIN', origin);
   const [formState, setFomState] = useState({
     font: 'Colfax',
     fileType: 'jpeg',
@@ -23,10 +30,9 @@ export default function Index() {
     icon2: null,
   });
 
-  let timeout;
   function getUrl(data) {
     console.log('change url');
-    const url = new URL(`${host}/image/pic.${data.fileType || 'png'}`);
+    const url = new URL(`${origin}image/pic.${data.fileType || 'png'}`);
     url.searchParams.append('text', data.text);
     url.searchParams.append('theme', data.theme);
     url.searchParams.append('md', data.md);
