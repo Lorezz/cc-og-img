@@ -232,7 +232,7 @@ export async function loader({ request, params }) {
     : { width: 2048, height: 1170, deviceScaleFactor: 1 };
   const isDev = process.env.NODE_ENV
     ? process.env.NODE_ENV === 'development'
-    : true;
+    : false;
   console.log('isDev', isDev);
   if (isDev) {
     //viewport = { ...viewport, deviceScaleFactor: 0.5 };
