@@ -250,8 +250,8 @@ export async function loader({ request, params }) {
   const page = await browser.newPage();
   page.setViewport(viewport);
   await page.setContent(content);
+  // path: `/tmp/${name}-${Date.now()}.${type}`,
   const pic = await page.screenshot({
-    // path: `/tmp/${name}-${Date.now()}.${type}`,
     type: type,
   });
   await browser.close();
